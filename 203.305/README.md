@@ -1,3 +1,3 @@
-# plotly-presentation
+# 203.305 teaching slides
 
-A test presentation of plotly based on reveal.js
+Slides for the lecture about Microarrays for the Advanced Genetics modules of Massey University (203.305)
