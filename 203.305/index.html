@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Advanced genetics - Microarray - 203.305</title>
+    
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    
+    <link rel="stylesheet" href="css/reveal.css">
+    <!-- <link rel="stylesheet" href="css/theme/night.css" id="theme"> -->
+    <!-- <link rel="stylesheet" href="css/theme/solarized.css" id="theme"> -->
+    <!-- <link rel="stylesheet" href="css/theme/sky.css" id="theme"> -->
+    <!-- <link rel="stylesheet" href="css/theme/black.css" id="theme"> -->
+    <link rel="stylesheet" href="css/theme/pydupont.css" id="theme">
+    
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+    <script type="text/javascript"
+	    src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    
+    <!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+  </head>
+  
+  <body>
+    
+    <div class="reveal">
+      
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+	<section data-background="pics/bg.png">
+	  <h2>Advanced genetics - 203.305</h2>
+	  <h3>Microarray - Hands-on data analysis</h3>
+	  <h4>Dr. Pierre-Yves Dupont, Postdoctoral Researcher</h4>
+	  <h4>Computer Biology Research Group</h4>
+	  <h4><a href="mailto:p.y.dupont@massey.ac.nz">p.y.dupont@massey.ac.nz</a></h4>
+	</section>
+
+	<section>
+	  <h2>Planning</h2>
+	  <p>
+	    <ul>
+	      <li><span class="list-header">15.9.14</span> – Introduction (lecture), <i>AHB2.38</i></li>
+	      <li class="fragment"><span class="list-header">22.9.14</span> – Paper discussion, <i>AHB2.38</i> - <span class="highlight">Discussion worksheet due</span></li>
+	      <li class="fragment"><span class="list-header">23.9.14</span> – From raw data to lists of differentially expressed genes (Step by step analysis of a microarray data set using the R language, <b>3h lab</b>, <i>SC5.10</i>)</li>
+	      <li class="fragment"><span class="list-header">29.09.14</span> – <span class="highlight">Lab discussion</span> (feedback!) and new developments in global gene expression analysis, <i>AHB2.38</i></li>
+	      <li class="fragment"><span class="list-header">30.09.14</span> – Biological interpretation of microarray data (Gene ontology analysis using the R language + online research of candidate genes, <b>3h lab</b>, <i>SC5.10</i>)</li>
+	    </ul>
+	  </p>
+
+	  <aside class="notes">
+	    Check the dates
+	  </aside>
+	</section>
+
+	<section>
+
+	  <section>
+	    <h2>Microarray studies</h2>
+	    <ol>
+	      <li><span class="highlight">Indroduction</span></li>
+	      <li>Microarray technology</li>
+	      <li>Statistics</li>
+	      <li>Gene expression databases and MIAME</li>
+	      <li>Examples of microarray studies (paper discussion topic and lab topic)</li>
+	    </ol>
+	  </section>
+	  
+	  <section>
+	    <h2>Microarray applications</h2>
+	    <ul>
+	      <li><span class="highlight">Gene expression analysis</span></li>
+	      <li>Re-sequencing</li>
+	      <li>SNP-analysis</li>
+	      <li>DNA-Protein interactions</li>
+	      <li>Discovery of new transcripts/alternative splice variants</li>
+	    </ul>
+
+	    <aside class="notes">
+              Check for re-sequencing and alternative splicing. Should I find papers for each?
+	    </aside>
+	  </section>
+	  
+	  <section>
+	    <h2>Expression Studies</h2>
+	    <img data-src="pics/DNA_RNA_Prot.svg" height="520px"/>
+	    <div class="footer">Figure modified from: <a href="http://www.whoi.edu/news-release/DeepBiosphere_mRNA">Katherine Joyce, Woods Hole Oceanographic Institution</a></div>
+	  </section>
+
+	  <section>
+	    <h2>Definitions</h2>
+	    <ul>
+	      <li><span class="list-header">Genome</span>: entire DNA sequence of an organism</li>
+	      <li><span class="list-header">Epigenome</span>: chemical marks of the genome that modify its expression</li>
+	      <li><span class="list-header">Transcriptome</span>: all gene transcripts present in a given cell/tissue at a given time (“snapshot”)</li>
+	      <li><span class="list-header">Transcriptomics</span>: global analysis of gene expression = genome-wide expression profiling</li>
+	    </ul>
+	  </section>
+
+	  <section>
+	    <h2>Definitions</h2>
+	    <ul>
+	      <li><span class="list-header">cDNA</span>: complementary DNA made from mRNA by the enzyme reverse transcriptase</li>
+	      <li><span class="list-header">EST</span>: Expressed Sequence Tag, small pieces of an expressed gene (cDNA)</li>
+	      <li><span class="list-header">Hybridization</span>: based on complementary molecules, sequences that are able to base-pair with one another. When two complementary sequences find each other, they will lock together, or hybridize (primer annealing, probe-target binding etc).</li>
+	    </ul>
+	  </section>
+
+	  <section>
+	    <h3>Genome-wide expression studies - Medical applications</h3>
+	    <ul>
+	      <li><span class="list-header">Cancer research</span>: Cell-cycle monitoring, genetic markers detection</li>
+	      <li><span class="list-header">Drug development and response</span>: Treatment-induced expression pattern</li>
+	      <li><span class="list-header">Diagnosis</span>: Disease-associated expression patterns</li>
+	    </ul>
+	  </section>
+
+	  <section>
+	    <h3>Genome-wide expression studies - Biological applications</h3>
+	    <ul>
+	      <li><span class="list-header">Development biology</span>: comparison of different developmental stages</li>
+	      <li><span class="list-header">Ecology</span>: interactions between organisms (symbiosis, pathogenicity...) or between organisms and environment (temperature, nutrient...)</li>
+	      <li><span class="list-header">Evolution</span>: within and between species variation, hybrids vs. parents, diploids vs. polyploids</li>
+	      <li><span class="list-header">Functional analyses</span>: wild type vs. mutant</li>
+	    </ul>
+	    <h3 class="highlight fragment">Hypothesis generating tool</h3>
+	  </section>
+	</section>
+
+	<section>
+	  <section>
+	    <h2>Microarray studies</h2>
+	    <ol>
+	      <li>Indroduction</li>
+	      <li><span class="highlight">Microarray technology</span></li>
+	      <li>Statistics</li>
+	      <li>Gene expression databases and MIAME</li>
+	      <li>Examples of microarray studies (paper discussion topic and lab topic)</li>
+	    </ol>
+	  </section>
+
+	  <section>
+	    <h2>What are microarrays?</h2>
+	    <div style="width: 100%;">
+	      <div style="float:left; width: 65%">
+		<blockquote style="margin: 15px 0 0 0; width: 100%;">
+		  A microarray is a <b>solid support</b> (such as a membrane or glass microscope slide) on which <b>DNA of known sequence</b> is deposited in a <b>grid-like array</b>.
+		</blockquote>
+	      </div>
+	      <div style="float:right;">
+		<img data-src="pics/aff_microarray.png" height="250px" />
+	      </div>
+	    </div>
+	    <img data-src="pics/slide.png" height="250px" />
+	  </section>
+
+	  <section>
+	    <h2>Microarray analysis principle</h2>
+	    <img data-src="pics/pipeline1.png" height="520px" />
+	    <div class="footer">Imge from: <a href="http://www.scq.ubc.ca/image-bank/">http://www.scq.ubc.ca/image-bank/</a></div>
+	  </section>
+
+	  <section>
+	    <h2>Microarray analysis principle</h2>
+	    <img data-src="pics/pipeline2.png" height="520px" />
+	    <div class="footer">Imge from: <a href="http://www.scq.ubc.ca/image-bank/">http://www.scq.ubc.ca/image-bank/</a></div>
+	  </section>
+
+	  <section>
+	    <h2>Competitive hybridization</h2>
+	    <p>
+	      It is possible to represent <b>different</b> samples on <b>one</b> microarray using <b>different fluorescent molecules (fluorophores)</b>
+	      <ul class="fragment">
+		<li><span class="list-header">Cyanin 3</span> (Cy3): green fluorescence (excited at 550nm, emission at 570nm)
+		<li><span class="list-header">Cyanin 5</span> (Cy5): red fluorescence (excited at 650nm, emission at 770nm)
+	      </ul>
+	    </p>
+	  </section>
+	  
+	  <section>
+	    <h2>Competitive hybridization</h2>
+	    <img data-src="pics/MonoColorArrayGrey.png" height="520px" />
+
+	    <aside class="notes">
+	      Prostate cancer chip.
+	      The two arrays are the same. They have been hybridized with two different fluorophores for the two different conditions. THey are originally grey (Black and white scanner)
+	    </aside>
+	  </section>
+
+	  <section>
+	    <h2>Competitive hybridization</h2>
+	    <img data-src="pics/RedAndGreenArray.png" height="520px" />
+
+	    <aside class="notes">
+	      Artificially colored in red and green (here, green is control)
+	    </aside>
+	  </section>
+
+	  <section>
+	    <h2>Competitive hybridization</h2>
+	    <img data-src="pics/BiColorArraySimple.png" height="520px" />
+
+	    <aside class="notes">
+	      The two chennels are then merged in a single image.
+	    </aside>
+	  </section>
+
+	  <section>
+	    <h2>Microarray study pipeline</h2>
+	    <h3>Question driven</h3>
+	    <h4>Goals? Hypothesis? Questions?</h4>
+	  </section>
+
+	  <section>
+	    <h2>Microarray study pipeline</h2>
+	    <div style="width: 100%; height: 500px">
+	      <div style="float:left; width: 50%;">
+		<ul>
+		  <li><span class="list-header">Platform</span>
+		</ul>
+	      </div>
+	      <div style="float:right; width: 50%">
+		<ul>
+		  <ul class="fragment">
+		    <li>What technology?
+		    <li>Source of the gene probes?
+		    <li>Cross-species hybridization?
+		  </ul>
+		</ul>
+	      </div>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h2>Microarray study pipeline</h2>
+	    <div style="width: 100%; height: 500px">
+	      <div style="float:left; width: 50%">
+		<ul >
+		  <li>Platform
+		  <li><span class="list-header">Experimental design</span>
+		</ul>
+	      </div>
+	      <div style="float:right; width: 50%">
+		<ul>
+		  <ul class="fragment">
+		    <li>What statistics?
+		    <li>What analysis software?
+		    <li>Replication level
+		    <li>Hybridization scheme
+		  </ul>
+		</ul>
+	      </div>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h2>Microarray study pipeline</h2>
+
+	    <div style="width: 100%; height: 500px">
+	      <div style="float:left; width: 50%">
+		<ul>
+		  <li>Platform
+		  <li>Experimental design
+		  <li><span class="list-header">Laboratory steps</span>
+		</ul>		
+	      </div>
+	      <div style="float:right; width: 50%">
+		<ul>
+		  <ul class="fragment">
+		    <li>Sample preparation and labelling
+		    <li>Hybridization
+		    <li>Washing
+		    <li>Image acquisition
+		  </ul>
+		</ul>
+	      </div>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h2>Microarray study pipeline</h2>
+
+	    <div style="width: 100%; height: 500px">
+	      <div style="float:left; width: 50%">
+		<ul >
+		  <li>Platform
+		  <li>Experimental design
+		  <li>Laboratory steps
+		  <li><span class="list-header">Bioinformatics steps</span>
+		</ul>		
+	      </div>
+	      <div style="float:right; width: 50%">
+		<ul>
+		  <ul class="fragment">
+		    <li>Data transformation and normalization
+		    <li>Analysis of differentially expressed genes (<b>statistical tests</b>, gene ontology, ...)
+		    <li>Visualization (graphics)
+		    <li>Data storage (databases, MIAME standards)
+		  </ul>
+		</ul>
+	      </div>
+	    </div>
+	  
+	  </section>
+
+	  <section>
+	    <h2>Microarray study pipeline</h2>
+	    <div style="width: 100%; height: 500px">
+	      <div style="float:left; width: 50%">
+		<ul >
+		  <li>Platform
+		  <li>Experimental design
+		  <li>Laboratory steps
+		  <li>Bioinformatics steps
+		  <li><span class="list-header">Data interpretation</span>
+		</ul>
+	      </div>
+	      <div style="float:right; width: 50%">		    
+		<ul>
+		  <ul class="fragment">
+		    <li>Answers?
+		    <li>New hypotheses?
+		    <li>Follow-up experiments?
+		    <li>Validation?
+		  </ul>
+		</ul>
+	      </div>
+	    </div>
+	    
+	  </section>
+	</section>
+	
+	<section>
+	  <section>
+	    <h2>Microarray studies</h2>
+	    <ol>
+	      <li>Indroduction</li>
+	      <li>Microarray technology</li>
+	      <li><span class="highlight">Statistics</span></li>
+	      <li>Gene expression databases and MIAME</li>
+	      <li>Examples of microarray studies (paper discussion topic and lab topic)</li>
+	    </ol>
+	  </section>
+
+	  <section>
+	    <h2>Log Fold Ratio</h2>
+	    <img data-src="pics/FoldRatio.png" height="450px" />
+	    <p class="fragment">
+	      Expression ratio: $log({\color{red}{Cy5} \over \color{green}{Cy3}})$
+	    </p>
+	  </section>
+
+	  <section>
+	    <h2>Log Fold Ratio</h2>
+	    <ul>
+	      <li class="fragment">$\color{green}{Cy3} = Sample1$ (Green)
+	      <li class="fragment">$\color{red}{Cy5} = Sample2$ (Red)
+	      <li class="fragment">$\color{red}{Cy5}$ &gt; $\color{green}{Cy3}$: higher expression in sample 2</li>
+              <li class="fragment">$\color{green}{Cy3}$ &gt; $\color{red}{Cy5}$: higher expression in sample 1
+	      <li class="fragment">M(log fold ratio) = $log_2({\color{red}{Cy5} \over \color{green}{Cy3}})$
+	      <li class="fragment">M(log fold ratio) = $log_2({\color{red}{Cy5}}) - log_2({\color{green}{Cy3}})$
+            </ul>
+          </section>
+	  
+	  <section>
+	    <h2>Log Fold Ratio</h2>
+	    Reminder: $log_2(x)$ is the unique real number $y$ such that:
+	    $b^y = x$.
+	    For example: $log_2(8) = 3$ because $2^3 = 8$
+	    <p>
+	      <table class="fragment">
+		<thead>
+		  <tr>
+		    <th>$log_2({\color{red}{Cy5}/\color{green}{Cy3}})$</th>
+		    <th>$\color{red}{Cy5}/\color{green}{Cy3}$</th>
+		  </tr>
+		  <tbody>
+		    <tr class="fragment"><td>2</td>      <td><span class="fragment">4</span></td>    </tr>
+		    <tr class="fragment"><td>1.58</td>   <td><span class="fragment">3</span></td>    </tr>
+		    <tr class="fragment"><td>1</td>      <td><span class="fragment">2</span></td>    </tr>
+		    <tr class="fragment"><td>0.58</td>   <td><span class="fragment">1.5</span></td>  </tr>
+		    <tr class="fragment"><td>0</td>      <td><span class="fragment">1</span></td>    </tr>
+		    <tr class="fragment"><td>-0.58</td>  <td><span class="fragment">0.66</span></td> </tr>
+		    <tr class="fragment"><td>-1</td>     <td><span class="fragment">0.5</span></td>  </tr>
+		    <tr class="fragment"><td>-1.58</td>  <td><span class="fragment">0.33</span></td>  </tr>
+		    <tr class="fragment"><td>-2</td>     <td><span class="fragment">0.25</span></td>  </tr>
+		  </tbody>
+		</thead>
+	      </table>
+	    </p>
+	  </section>
+	  
+	  <section>
+	    <h2>Hypothesis testing</h2>
+	    <h3>T-test</h3>
+	    <blockquote style="margin: 15px 0 0 0; width: 100%;">
+	      Null hypothesis ($H_0$): gene A is <b>not</b> differentially expressed between two treatments
+	    </blockquote>
+	    <div class="fragment" style="text-align: left;">
+	      <blockquote class="formula">
+		<b>Mean:</b><br />
+		$\overline{x}={{1 \over M} \sum_{i=1}^{M}{x_i}}$; for gene $x$ in M <b>replicates</b>
+	      </blockquote>
+	    </div>
+	    <div class="fragment" style="text-align: left;">
+	      <blockquote class="formula">
+		<b>Variance: </b><br />
+		$S_{x}^2 = {{1 \over {M-1}} \sum_{i=1}^{M}({x_i - \overline{x}^2})}$
+	      </blockquote>
+	    </div>
+	    <div class="fragment" style="text-align: left;">
+	      <blockquote class="formula">
+		<b>T-statistic:</b><br />
+		$T_x={{ \overline{x_{S_1}} - \overline{x_{S_2}} } \over  \sqrt[2]{ {S_{x_{S_1}}^2 \over M} + {S_{x_{S_2}}^2 \over N} } }$
+	      </blockquote>
+	    </div>
+	  </section>
+	  
+	  <section>
+	    <h2>T-test and P-value</h2>
+	    <img data-src="pics/Student's t-distribution.png" height="400px" style="background-color:transparent;"/>
+	    <blockquote>
+	      T-test is used only to compare two samples. To compare more, ANOVA (<u>AN</u>alysis <u>O</u>f <u>VA</u>riance) is used.
+	    </blockquote>
+	  </section>
+	  
+	  <section>
+	    <h2>Hypothesis testing</h2>
+	    <h3>T-test</h3>
+	    <blockquote style="margin: 15px 0 0 0; width: 100%;">
+	      Null hypothesis ($H_0$): gene A is <b>not</b> differentially expressed between two treatments
+	    </blockquote>
+	    <ol>
+	      <li> Compute the signal to noise ratio (difference of the means or medians) for each gene
+	      <li> Compute the t-statistic for each gene using the replicates
+	      <li> Compare t-statistic with the t-distribution
+	      <li> If t-statistic is more extreme than the critical t-statistic at a chosen significance level (e.g. $\alpha=0.05$) reject the null hypothesis, otherwise accept it. <b>P-value estimation</b>
+	    </ol>
+	  </section>
+	  
+	  <section>
+	    <h2>Quiz</h2>
+	    
+	    <div style="text-align: left;">	    
+	      <div>Usually, a p &lt; &nbsp;<span class="fragment"><b>0.05</b></span>&nbsp; is considered small enough to reject the null hypothesis of no biological effect in favour of the alternative hypothesis of a biological effect.</div>
+	      <div class="fragment">P-values are also known under type &nbsp;<span class="fragment"><b>1</b></span>&nbsp; error – the probability of rejecting the null hypothesis when it is actually true (= false positive rate).</div>
+	      <div class="fragment">P-value of 0.01 means a false positive rate of &nbsp;<span class="fragment"><b>1</b></span>&nbsp; %.</div>
+	      <div class="fragment">When analyzing multidimensional data sets, p-values need to be adjusted for &nbsp;<span class="fragment"><b>multiple testing</b></span>&nbsp;.</div>
+	      <div class="fragment">Two common p-value adjustment methods are &nbsp;<span class="fragment"><b>Bonferroni</b></span>&nbsp; and &nbsp;<span class="fragment"><b>False Discovery Rate</b></span>&nbsp;.</div>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h2>Bonferroni Correction</h2>
+	    <ul>
+	      <li>If you hypothesize that <span class="highlight">a specific gene</span> is up-regulated, p&nbsp;&lt;&nbsp;0.05 is fine.
+	      <li class="fragment">If you hypothesize that <span class="highlight">any of 10,000 genes</span> is up-regulated, with  p&nbsp;&lt;&nbsp;0.05 you can expect to see 5% (<span class="highlight">500 genes</span>) up-regulated by chance alone. 
+	      <li class="fragment">To account for the thousands of repeated measurements, some researchers apply a Bonferroni correction.
+	    </ul>
+	    <div class="fragment highlight">
+	      $p$ &lt; $(0.05)/10,000$ or $p$ &lt; $5e^{-6}$
+	    </div>
+	    <blockquote class="fragment">
+	      The Bonferroni correction is generally considered to be <span class="highlight">too</span> conservative and <span class="highlight">False Discovery Rate (FDR)</span> should be used.
+	    </blockquote>
+	  </section>
+
+	  <section>
+	    <h2>False Discovery Rate</h2>
+	    <h3>Benjamini-Hochberg method</h3>
+	      <div style="text-align:left;">
+		Imagine an array with 6400 genes and an experiment where 184 genes are differentially expressed at p=0.01: 64 genes would be expected to appear differentially expressed by chance alone.
+	      </div>
+	      <br/>
+	      <div class="fragment highlight">
+		FDR = false discovery rate = ${{64}\over{184}} * 100 = 35 \%$
+	      </div>
+	  </section>
+
+	  <section>
+	    <h2>False Discovery Rate</h2>
+	    <h3>Benjamini-Hochberg method</h3>
+	    <table>
+	      <thead>
+		<th>P-value</th><th>Observed Number of genes</th><th>Expected number of False Positives</th><th>FDR</th>
+	      </thead>
+	      <tbody>
+		<tr><td>$10^{-2}$</td><td>184</td><td>64 </td><td>35</td></tr>
+		<tr><td>$10^{-3}$</td><td> 35</td><td> 6 </td><td>18</td></tr>
+		<tr><td>$10^{-4}$</td><td> 15</td><td>0.6</td><td> 4</td></tr>
+	      </tbody>
+	    </table>
+	    <br />
+	    <div style="text-align:left;">
+	      With decreasing p-value, FDR also decreases, but so does the number of differentially expressed genes – choose a p-value which balances both!<br />
+	    </div>
+
+	    <aside class="notes">
+	      E.g. report 184 regulated transcripts of which 64 are likely to be false positives or 35 regulated transcripts of which 6 are likely to be false positives?
+	    </aside>
+	  </section>
+	</section>
+
+	<section>
+	  <section>
+	    <h2>Microarray studies</h2>
+	    <ol>
+	      <li>Indroduction</li>
+	      <li>Microarray technology</li>
+	      <li>Statistics</li>
+	      <li><span class="highlight">Gene expression databases and MIAME</span></li>
+	      <li>Examples of microarray studies (paper discussion topic and lab topic)</li>
+	    </ol>
+	  </section>
+
+	  <section>
+	    <h2>Gene expression databases</h2>
+	    <div>
+	      Gene Expression Omnibus (GEO) @NCBI (<a href="http://www.ncbi.nlm.nih.gov/geo/" target="_blank">http://www.ncbi.nlm.nih.gov/geo/</a>)
+	      <img data-src="pics/geo.png" height="400px"/>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h2>Gene expression databases</h2>
+	    <div>	       
+	      Geo Datasets @NCBI (<a href="http://www.ncbi.nlm.nih.gov/gds/" target="_blank">http://www.ncbi.nlm.nih.gov/gds/</a>)<br />
+	      Geo Profiles @NCBI (<a href="http://www.ncbi.nlm.nih.gov/geoprofiles/" target="_blank">http://www.ncbi.nlm.nih.gov/geoprofiles/</a>)
+	      <a href="http://www.ncbi.nlm.nih.gov/geo/info/overview.html" target="_blank"><img data-src="pics/gds.png" height="400px"/></a>
+	    </div>
+	  </section>
+	  
+	  <section>
+	    <h2>Gene expression databases</h2>
+	    <div>	       
+	      ArrayExpress @ EBI (<a href="http://www.ebi.ac.uk/arrayexpress/" target="_blank">http://www.ebi.ac.uk/arrayexpress/</a>)
+	      <img data-src="pics/arrayexpress.png" height="400px"/>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h2>Gene expression databases</h2>
+	    <div>	       
+	      Expression Atlas @ EBI (<a href="http://www.ebi.ac.uk/gxa/" target="_blank">http://www.ebi.ac.uk/gxa/</a>)
+	      <img data-src="pics/gxa.png" height="400px"/>
+	    </div>
+	  </section>
+
+	  <section>
+	    <h2>MIAME Standard</h2>
+	    <blockquote>
+	      <span class="highlight">Minimum Information About a Microarray Experiment</span> that is needed to enable the interpretation of the results of the experiment unambiguously and potentially to reproduce the experiment
+	    </blockquote>
+
+	    <div>
+	      <a href="http://fged.org/Workgroups/MIAME/miame.html/">http://fged.org/Workgroups/MIAME/miame.html/</a>
+	    </div>
+	    
+	  </section>
+
+	   <section>
+	    <h2>MIAME Standard</h2>
+	    <div>
+	      <ol>
+		<li class="fragment"><span class="highlight">Raw data</span> for each hybridisation (CEL or GPR files)
+		<li class="fragment"><span class="highlight">Processed</span> (normalised) <span class="highlight">data</span> (used to draw the conclusions from the study) 
+		<li class="fragment">Essential <span class="highlight">sample annotation</span> including experimental factors and their values
+		<li class="fragment"><span class="highlight">Experimental design</span> including sample data relationships (e.g. which hybridizations are technical and biological replicates)
+		<li class="fragment">Sufficient <span class="highlight">array annotation</span> (e.g. gene identifiers, probe sequences)
+		<li class="fragment">Essential <span class="highlight">laboratory and data processing protocols</span> (e.g. normalization method used to obtain the final data)
+	      </ol>
+	    </div>
+	  </section>
+	</section>
+
+	<section>
+	  <section>
+	    <h2>Microarray studies</h2>
+	    <ol>
+	      <li>Indroduction</li>
+	      <li>Microarray technology</li>
+	      <li>Statistics</li>
+	      <li>Gene expression databases and MIAME</li>
+	      <li><span class="highlight">Examples of microarray studies (paper discussion topic and lab topic)</span></li>
+	    </ol>
+	  </section>
+
+	  <section>
+	    <h3>Microarray paper discussion</h3>
+	    <img data-src="pics/paper.png" height="600px" />
+	  </section>
+
+	  <section>
+	    <h2>Lab case study</h2>
+	    <h3>Herbivory in Nicotiana attenuata (Solanaceae)</h3>
+	    
+	  </section>
+	  
+	</section>
+	
+      </div>
+    </div>
+    
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    
+    <script>
+      
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
+
+      width: 960,
+      height: 700,
+      // Factor of the display size that should remain empty around the content
+      margin: 0.05,
+      // Bounds for smallest/largest possible scale to apply to content
+      minScale: 0.2,
+      maxScale: 1.0,
+      
+      transition: 'fade', // none/fade/slide/convex/concave/zoom
+      
+      // Optional reveal.js plugins
+      dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true },
+      { src: 'plugin/notes/notes.js', async: true }
+      ]
+      });
+      
+    </script>
+    
+  </body>
+</html>
