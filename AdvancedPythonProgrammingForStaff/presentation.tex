@@ -1,0 +1,657 @@
+\documentclass[12pt]{beamer}
+
+\usepackage{array}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{minted}
+\usemintedstyle{autumn}
+
+
+\renewcommand{\theFancyVerbLine}{\sffamily
+\textcolor[rgb]{0.5,0.5,1.0}{\scriptsize
+\oldstylenums{\arabic{FancyVerbLine}}}}
+
+
+\mode<presentation>
+{
+	%\usetheme{Warsaw}
+	%\usetheme{Darmstadt}
+	\usetheme{Boadilla}
+	%\usetheme{CambridgeUS}
+	%\usetheme{Madrid}
+}
+
+\makeatletter
+\usepackage{times}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usetikzlibrary{arrows,shapes}
+\usepackage{natbib} 
+
+
+\setbeamertemplate{navigation symbols}{
+   %\insertslidenavigationsymbol
+   %\insertframenavigationsymbol
+   %\insertsubsectionnavigationsymbol
+   %\insertsectionnavigationsymbol
+   %\insertdocnavigationsymbol
+   %\insertbackfindforwardnavigationsymbol
+}
+
+\title[Python]{Different ways to improve python code efficiency}
+\date{}
+\institute{}
+\author{Pierre-Yves Dupont}
+
+\begin{document}
+
+\begin{frame}
+	\titlepage
+\end{frame}
+
+\section{Simple example}
+\subsection*{}
+\begin{frame}
+  \begin{block}{}
+    \center{Simple example}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Fibonacci number}
+  \begin{block}{fibo.py}
+	\begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{python}
+def fibo(n):
+    if n == 0 or n == 1:
+        return n
+    return fibo(n - 2) + fibo(n - 1)
+	\end{minted}
+  \end{block} 
+        Pure python version: fibo(38) computed in 15s
+\end{frame}
+
+\section{Cython}
+\subsection*{}
+\begin{frame}
+  \begin{block}{}
+    \center{Cython}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{}
+    \begin{itemize}[<+->]
+    \item apt-get install cython
+    \item programming language based on python (Pyrex)
+    \item simplify development of C extensions for Python
+    \item possible to transform python code in C code
+    \item used in Scipy or SAGE
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{block}{Cython on fibo.py}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{bash}
+#build fibo.c file
+cython fibo.py
+#build fibo.so library
+gcc fibo.c -o fibo.so -shared -pthread -fPIC \
+    -fwrapv -O2 -Wall -fno-strict-aliasing $(pkg-config python --cflags)
+    \end{minted}
+% $
+  \end{block}
+  \begin{block}{Using fibo.so}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{python}
+import fibo
+print fibo.fibo(38)
+    \end{minted}
+  \end{block}
+  Simple Cython version: fibo(38) computed in 10s (33\%)
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{More improvement}
+    \begin{block}{fibo.\emph{pyx}}
+       \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{python}
+cpdef int fibo(int n):
+    if n == 0 or n == 1: 
+        return n
+    return fibo(n-2) + fibo(n-1)
+       \end{minted}
+    \end{block}
+    \begin{block}{Cython compiling}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{bash}
+cython fibo.py
+gcc fibo.c -o fibo.so -shared -pthread -fPIC \
+    -fwrapv -O2 -Wall -fno-strict-aliasing $(pkg-config python --cflags)
+    \end{minted}
+% $
+  \end{block}
+   Cython/pyx version: fibo(38) computed in 5s (66.7\%)
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Standalone executable}
+  \begin{block}{}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{bash}
+cython --embed test_fibo.py -o fibo.c
+gcc fibo.c -o fibo $(pkg-config python --cflags) -lpython2.7
+./fibo
+    \end{minted}
+% $
+  \end{block}
+See more on \url{http://docs.cython.org/index.html}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Pure C version}
+  \begin{block}{fibo\_pure\_c.c}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+#include <stdio.h>
+#include <stdlib.h>
+
+long fibo(long n){
+  if(n == 0 || n == 1){return n;}
+  return fibo(n - 2) + fibo(n - 1);
+}
+
+void main(int argc, char* argv[]){
+  printf("%ld\n",fibo(38));
+}
+    \end{minted}
+  \end{block}
+C version: fibo(38) computed in 0.5s
+\end{frame}
+
+\section{How to extend python with pure C libraries}
+\begin{frame}
+  \begin{block}{}
+    \center{How to extend python with pure C libraries}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{SWIG}
+  \begin{block}{}
+    \begin{itemize}[<+->]
+    \item Simplified Wrapper and Interface Generator
+    \item Tool used to connect C/C++ libraries to programs written in Python, Perl, Ruby, R, Java\dots
+    \item apt-get install swig
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Connect fibo\_pure\_c.c to Python}
+  \begin{block}{Interface file fibo\_pure\_c.i}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+%module fibo_pure_c
+%{
+extern long fibo(long n);
+%}
+extern long fibo(long n);
+    \end{minted}
+  \end{block}
+  \begin{block}{Wrapper generation}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{bash}
+#generate fibo_pure_c_wrap.c
+swig -python fibo_pure_c.i
+#build the library
+gcc -c fibo_pure_c.c fibo_pure_c_wrap.c \
+    -I/usr/include/python2.7
+ld -shared fibo_pure_c.o fibo_pure_c_wrap.o -o _fibo_pure_c.so 
+    \end{minted}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{block}{Use the C library in python}
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{python}
+import fibo_pure_c as fibo
+print fibo.fibo(38)
+    \end{minted}    
+  \end{block}
+  Python with pure C library: computation of fibo(38) in 0.5s
+\end{frame}
+
+\section{Another problem: evaluation of Pi}
+\begin{frame}
+  \begin{block}{}
+    \center{Another problem: evaluation of Pi}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Pi}
+    \begin{equation}
+      \label{eq:1}
+      \pi = \int_0^1 f(x) \, \mathrm dx , with \ f(x) = \frac{4}{1+x^2}
+    \end{equation}
+    \begin{equation}
+      \label{eq:2}
+      \pi = \frac{1}{n} \sum_{i=1}^{n} f(x_i) , with\ x_i = \frac{i-\frac{1}{2}}{n}\ for\ i=1,\dots,n
+    \end{equation}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{python}
+import sys
+PI = 3.141592653589793
+
+def f(a):
+    return 4.0/(1.0+a**2)
+
+def main():
+    while(1):
+        n = raw_input("Enter the number of intervals: (0  quits)\n")
+        try:
+            n=int(n)
+        except ValueError:
+            return 2
+        if n == 0: break
+        #LOOP TO PARALLELIZE
+        h = 1.0/n
+        sum = 0.0
+        for i in range(1,n):
+            x = h*(i - 0.5)
+            sum += f(x)
+        pi = h * sum
+        #END
+        sys.stdout.write("pi is approximatly: %.16f Error is: %.16f \n"\
+        % (pi, abs(pi-PI)));
+    \end{minted}
+$n = 10^8$ pi evaluated in 25s, $n = 10^9$ crash
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Weave}
+      \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{python}
+import sys
+from scipy import weave
+from scipy.weave import converters
+import time
+PI = 3.141592653589793
+
+code="""
+int i;
+double x;
+double sum = 0.0;
+for(i = 1;i <= n; i++) {
+    x = h*((double)i-(double)0.5);
+    sum += (double)4.0/((double)1.0+(x*x));
+}
+return_val = sum;
+"""
+vars = "h n".split()
+...
+      \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Weave}
+      \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{python}
+...
+def main():
+    while(1):
+        n = raw_input("Enter the number of intervals: (0  quits)\n")
+        try:
+            n=int(n)
+        except ValueError:
+            return 2
+        if n == 0: break
+        #LOOP TO PARALLELIZE
+        h = 1.0/n
+        sum = float(0.0)
+        tps = time.time()
+        sum = weave.inline(code, vars, 
+              type_converters = converters.blitz, 
+              compiler = 'gcc')
+        print time.time() - tps
+        pi = h * sum
+        #END
+        sys.stdout.write("pi is approximatly: %.16f Error is: %.16f \n"\
+        % (pi, abs(pi-PI)));
+      \end{minted}
+$n = 10^8$ pi evaluated in 0.3s, $n = 10^9$ pi evaluated in 4s
+\end{frame}
+
+\section{MPI and OpenMP}
+\begin{frame}
+  \begin{block}{}
+    \center{MPI and OpenMP}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Parallel computing with MPI and OpenMP}
+  \begin{block}{MPI}
+    \begin{itemize}[<+->]
+    \item Message Passing Interface
+    \item Fortran 77, 90, 95 and C/C++
+    \item Interfaces for C\#, Java\dots
+    \item Parallel machines and on workstation clusters
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Parallel computing with MPI and OpenMP}
+  \begin{block}{OpenMP}
+    \begin{itemize}[<+->]
+    \item Open MultiProcessing
+    \item Fortran 90, 95 and C/C++
+    \item Shared memory multiprocessing programming
+    \item Most of the processor architectures compatible with MPI
+    \item Based on \emph{pragmas} (compiler-specific preprocessor directives)
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Simple C version}
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define PI 3.1415926535897932384626433832795029L
+
+double f(double a) {
+  return (double)4.0/((double)1.0+(a*a));
+}
+...
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Simple C version}
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+int main(int argc, char* argv[])
+{
+  int n, i;
+  double h, pi, sum, x ;
+  for(;;) {
+    printf("Enter the number of intervals: (0  quits)");
+    if(!scanf("%lu",&n)){return 2;}
+    if(n ==0)
+      break;
+    //LOOP TO PARALLELIZE
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+    for(i =1;i<=n;i++) {
+      x = h*((double)i-(double)0.5);
+      sum += f(x);
+    }
+    pi = h*sum;
+    //END
+    printf("pi is approximatly: %.16f Error is: %.16f \n",\
+    pi, fabs(pi-PI));
+  }
+  return EXIT_SUCCESS ;
+}
+$n = 10^9$ pi evaluated in 4sec
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Pi evaluation using MPI}
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <mpi.h>
+#define PI 3.1415926535897932384626433832795029L
+
+double f(double a) {
+  return (double)4.0/((double)1.0+(a*a));
+}
+...
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Pi evaluation using MPI}
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+int main(int argc, char* argv[])
+{
+  int n, i;
+  double h, pi, sum, x ;
+  
+  double mypi;
+  int myid, numprocs, islave;
+  MPI_Status status;
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+  MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+  n=0;
+...
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+  for(;;) {
+    if (myid == 0){
+      printf("Enter the number of intervals: (0  quits)\n"); 
+      if(!scanf("%d",&n)){return 2;}
+    }
+    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    if(n ==0)
+      break;
+    //LOOP TO PARALLELIZE
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+    for(i = myid + 1; i <= n; i += numprocs){
+      x = h * ((double)i - (double)0.5);
+      sum += f(x);
+    }
+    mypi = h*sum;
+    MPI_Reduce(&mypi, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    //END
+    if(myid == 0){
+      printf("pi is approximatly: %.16f Error is: %.16f \n",\
+      pi, fabs(pi-PI));
+    }
+  }
+  MPI_Finalize();
+  return EXIT_SUCCESS ;
+}
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{block}{Compilation and Run}
+    \begin{minted}[fontsize=\scriptsize, linenos=false, numbersep=5pt]{bash}
+mpicc -g -O2 pi_mpi.c -o pi_mpi #mpi_c++ exists
+mpirun -np 12 -hostfile hostfile ./pi_mpi
+    \end{minted}
+  \end{block}
+  \begin{block}{}
+    \begin{itemize}[<+->]
+    \item Different compiler, some differences with standard gnu compiler
+    \item The code is completely parallelized
+    \item A lot of differences between simple C code and MPI code
+    \item $n = 10^9$ pi evaluated in 2s (12 threads)
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Pi evaluation using OpenMP}
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <omp.h>
+#define PI 3.1415926535897932384626433832795029L
+
+double f(double a) {
+  return (double)4.0/((double)1.0+(a*a));
+}
+...
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+int main(int argc, char* argv[]){
+  int n, i;
+  double h, pi, sum, x ;
+  for(;;) {
+    printf("Enter the number of intervals: (0  quits)\n");
+    if(!scanf("%u",&n)){return 2;}
+    if(n ==0)
+      break;
+    //LOOP TO PARALLELIZE
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+#pragma omp parallel for num_threads(12) private(i,x) reduction(+:sum)
+    for(i =1;i<=n;i++) {
+      x = h*((double)i-(double)0.5);
+      //#pragma omp critical
+      sum += f(x);
+    }
+    pi = h*sum;
+    //END
+    printf("pi is approximatly: %.16f Error is: %.16f \n",\
+    pi, fabs(pi-PI));
+  }
+  return EXIT_SUCCESS ;
+}
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{block}{Compilation and Run}
+    \begin{minted}[fontsize=\scriptsize, linenos=false, numbersep=5pt]{bash}
+gcc -fopenmp -Wall -O2 pi_openmp.c -o pi_openmp #g++ works fine
+./pi_openmp
+    \end{minted}
+  \end{block}
+  \begin{block}{}
+    \begin{itemize}[<+->]
+    \item Standard compiler, use openmp library
+    \item Only part of code (loops) are parallelized
+    \item Really close to original C code
+    \item $n = 10^9$ pi evaluated in 3s (12 threads)
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Pi evaluation using OpenMP and MPI}
+  In MPI version of code, insertion of OMP pragma
+  \begin{minted}[fontsize=\scriptsize, linenos=true, numbersep=5pt]{c}
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+    #pragma omp parallel for reduction(+:sum) private(i,x)
+    for(i = myid + 1; i <= n; i += numprocs){
+      x = h * ((double)i - (double)0.5);
+      sum += f(x);
+    }
+    mypi = h*sum;
+    MPI_Reduce(&mypi, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \begin{block}{Compilation and Run}
+    \begin{minted}[fontsize=\scriptsize, linenos=false, numbersep=5pt]{bash}
+mpicc -g -O2 -fopenmp pi_mpi.c -o pi_mpi
+mpirun -np 12 -hostfile hostfile ./pi_mpi
+    \end{minted}
+  \end{block}
+  \begin{block}{}
+    \begin{itemize}[<+->]
+    \item MPI compiler
+    \item MPI used to share the computation on different nodes
+    \item OpenMP used to make threads within a node
+    \item $n = 10^9$ pi evaluated in 2s (6 nodes, 2 threads)
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inlining parallelized C/C++ code in python}
+  \begin{minted}[fontsize=\scriptsize, linenos=false, numbersep=5pt]{python}
+import sys
+from scipy import weave
+from scipy.weave import converters
+import time
+PI = 3.141592653589793
+
+code="""
+int i;
+double x;
+double sum = 0.0;
+#pragma omp parallel for private(i,x) reduction(+:sum)
+for(i = 1;i <= n; i++) {
+    x = h*((double)i-(double)0.5);
+    sum += (double)4.0/((double)1.0+(x*x));
+}
+return_val = sum;
+"""
+vars = "h n".split()
+weave_omp = \
+{
+    'headers': ['<omp.h>'],
+    'extra_compile_args': ['-fopenmp'],
+    'extra_link_args': ['-lgomp']
+}
+...   
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Inlining parallelized C/C++ code in python}
+  \begin{minted}[fontsize=\scriptsize, linenos=false, numbersep=5pt]{python}
+def f(a):
+    return 4.0/(1.0+a**2)
+
+def main():
+    while(1):
+        n = raw_input("Enter the number of intervals: (0  quits)\n")
+        try:
+            n=int(n)
+        except ValueError:
+            return 2
+        if n == 0: break
+        #LOOP TO PARALLIZE
+        h = 1.0/n
+        sum = float(0.0)
+        tps = time.time()
+        sum = weave.inline(code, vars,
+                type_converters = converters.blitz, 
+                compiler = 'gcc', **weave_omp)
+        print time.time() - tps
+        pi = h * sum
+        #END
+        sys.stdout.write("pi is approximatly: %.16f Error is: %.16f \n" % \
+                 (pi, abs(pi-PI)));
+
+  \end{minted}
+$n = 10^9$ pi evaluated in 1.3s (12 threads)
+\end{frame}
+
+\begin{frame}
+  \frametitle{Comparison of the efficiency of the different methods}
+  \begin{block}{}
+    \begin{tabular}{l l}
+slow & 430  seconds \\
+numeric & 2.76 seconds \\
+Cython pyrex & 2.55 seconds \\
+fortran77 & 2.53 seconds \\
+fortran90 & 0.60 seconds  \\
+fortran95 & 0.59 seconds \\ \hline
+C & 2.20 seconds \\
+    \end{tabular}
+  \end{block}
+\end{frame}
+
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

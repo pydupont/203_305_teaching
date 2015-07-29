@@ -1,0 +1,8 @@
+\beamer@endinputifotherversion {3.10pt}
+\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
+\beamer@sectionintoc {2}{SVN commands}{10}{0}{2}
+\beamer@sectionintoc {3}{Examples}{18}{0}{3}
+\beamer@sectionintoc {4}{The conflicts}{22}{0}{4}
+\beamer@sectionintoc {5}{Comparing files}{27}{0}{5}
+\beamer@sectionintoc {6}{Setup your own svn repository}{37}{0}{6}
+\beamer@sectionintoc {7}{Documentation}{42}{0}{7}

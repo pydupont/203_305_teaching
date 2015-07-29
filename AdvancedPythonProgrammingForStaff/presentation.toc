@@ -1,0 +1,6 @@
+\beamer@endinputifotherversion {3.22pt}
+\beamer@sectionintoc {1}{Simple example}{2}{0}{1}
+\beamer@sectionintoc {2}{Cython}{4}{0}{2}
+\beamer@sectionintoc {3}{How to extend python with pure C libraries}{14}{0}{3}
+\beamer@sectionintoc {4}{Another problem: evaluation of Pi}{20}{0}{4}
+\beamer@sectionintoc {5}{MPI and OpenMP}{25}{0}{5}

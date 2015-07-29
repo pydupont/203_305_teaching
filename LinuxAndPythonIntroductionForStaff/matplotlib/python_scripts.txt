@@ -1,0 +1,121 @@
+import matplotlib.pyplot as plt
+import sys
+import numpy
+
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+data = numpy.genfromtxt(sys.argv[1], dtype=float, delimiter='\t', skip_header=True) 
+
+plt.boxplot(data)
+plt.ylim([-1,4])
+plt.show()
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+#Fake data generation
+e1 = np.random.normal(0, 1, size=(500,))
+e2 = np.random.normal(0, 1, size=(500,))
+e3 = np.random.normal(0, 2, size=(500,))
+e4 = np.random.normal(0, 2, size=(500,))
+
+data=[e1,e2,e3,e4]
+plt.boxplot(data)
+plt.show()
+import numpy as np
+import matplotlib.pyplot as plt
+
+# evenly sampled time at 200ms intervals
+t = np.arange(0., 5., 0.2) #Simple data data. Same as range() function
+
+# red dashes, blue squares and green triangles
+plt.plot(t, t, 'r--')    #Red (r) dashes (--)
+plt.plot(t, t**2, 'bs')  #Blue (b) squares (s)
+plt.plot(t, t**3, 'g^')  #Green (g) triangles (^)
+plt.plot(t, t**4, 'b+-') #Blue (b) crosses (+) linked by a line (-)
+plt.show()
+import matplotlib.pyplot as plt # import the pyplot module as plt
+import sys
+
+# sys.argv is a list containing the command line parameters
+# sys.argv[0] always contains the name of the python script
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+csv_file_name = sys.argv[1]
+csv = open(csv_file_name, 'r') #open the csv file
+data = [] #initiation of the data list
+for line in csv: #read the file
+   line = line.rstrip() # remove the 'newline' character at the end of the line
+   data.append(float(line))#append the current value in the data list
+print data
+csv.close() #close the csv file
+
+plt.plot(data) #Simple scatter plot of the data
+plt.ylabel('My data') #title of the Y axis
+plt.show() # show the plot
+import sys
+
+# sys.argv is a list containing the command line parameters
+# sys.argv[0] always contains the name of the python script
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+csv_file_name = sys.argv[1]
+csv = open(csv_file_name, 'r') #open the csv file
+data = []
+for line in csv: #read the file
+   line = line.rstrip() # remove the 'newline' character at the end of the line
+   data.append(float(line))
+print data
+csv.close() #close the csv file
+import sys
+
+# sys.argv is a list containing the command line parameters
+# sys.argv[0] always contains the name of the python script
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+csv_file_name = sys.argv[1]
+csv = open(csv_file_name, 'r') #open the csv file
+data = [[],[]] #initiation of the data list
+for line in csv: #read the file
+   line = line.rstrip() # remove the 'newline' character at the end of the line
+   line = line.split(",")
+   for i in range(len(line)): # read the data on the line
+      data[i].append(float(line[i]))#append the current value in the data list
+print data
+csv.close() #close the csv file
+import matplotlib.pyplot as plt
+import sys
+import numpy
+
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+data = numpy.genfromtxt(sys.argv[1], dtype=float, delimiter=',', skip_header=True) 
+
+x = data[:,0]
+y = data[:,1]
+
+plt.plot(x,y)
+plt.xlabel( "X values" )
+plt.ylabel( "Y values" )
+plt.show()
+
+import sys
+import numpy
+
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+data = numpy.genfromtxt(sys.argv[1], dtype=float, delimiter=',', skip_header=True) 
+print 'All data'
+print data

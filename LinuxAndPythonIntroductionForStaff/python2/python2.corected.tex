@@ -1,0 +1,280 @@
+\documentclass[article,10pt]{scrartcl}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{vmargin}
+\setmarginsrb{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}
+\setlength{\parindent}{0cm}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{hyperref}
+
+% python script syntax taken from 
+% http://widerin.org/blog/syntax-highlighting-for-python-scripts-in-latex-documents
+\definecolor{Code}{rgb}{0,0,0}
+\definecolor{Decorators}{rgb}{0.5,0.5,0.5}
+\definecolor{Numbers}{rgb}{0.5,0,0}
+\definecolor{MatchingBrackets}{rgb}{0.25,0.5,0.5}
+\definecolor{Keywords}{rgb}{0,0,1}
+\definecolor{self}{rgb}{0,0,0}
+\definecolor{Strings}{rgb}{0,0.63,0}
+\definecolor{Comments}{rgb}{0,0.63,1}
+\definecolor{Backquotes}{rgb}{0,0,0}
+\definecolor{Classname}{rgb}{0,0,0}
+\definecolor{FunctionName}{rgb}{0,0,0}
+\definecolor{Operators}{rgb}{0,0,0}
+\definecolor{Background}{rgb}{0.98,0.98,0.98}
+
+\lstnewenvironment{python}[1][]{
+\lstset{
+%numbers=left,
+%numberstyle=\footnotesize,
+%numbersep=1em,
+xleftmargin=1em,
+framextopmargin=2em,
+framexbottommargin=2em,
+showspaces=false,
+showtabs=false,
+showstringspaces=false,
+frame=l,
+tabsize=4,
+% Basic
+%basicstyle=\ttfamily\small\setstretch{},
+backgroundcolor=\color{Background},
+language=Python,
+% Comments
+commentstyle=\color{Comments}\slshape,
+% Strings
+stringstyle=\color{Strings},
+morecomment=[s][\color{Strings}]{"""}{"""},
+morecomment=[s][\color{Strings}]{'''}{'''},
+% keywords
+morekeywords={import,from,class,def,for,while,if,is,in,elif,else,not,and,or,print,break,continue,return,True,False,None,access,as,,del,except,exec,finally,global,import,lambda,pass,print,raise,try,assert},
+keywordstyle={\color{Keywords}\bfseries},
+% additional keywords
+morekeywords={[2]@invariant},
+keywordstyle={[2]\color{Decorators}\slshape},
+emph={self},
+emphstyle={\color{self}\slshape},
+%
+}}{}
+
+\begin{document}
+\title{Data analysis using python}
+\subtitle{Student and Staff IT Introduction}
+\maketitle
+
+
+
+\subsection*{The Art of Progamming}
+Programming is a science and an art. As we are going to do more complex thing with programming, you will soon discover there are many ways to do the same thing. At the beginning one may only want to get the right result, whatever the way. In such case, it is better to use as simple code as possible, with the functions you know the best.\\
+Good programming is hard to define. Some are looking for speed optimization, some are looking for memory optimization, some care a lot about elegance and style, which are quite subjective. A good program will often use a trade-off between speed and memory, depeding on the user's need.
+\\
+
+In any case, it is always better to follow good practice while writing script, such as:
+\begin{itemize}
+\item Use explicit names for your variables, and file names
+\item Be consistent in your code, with name, spacing, etc.
+\item Keep your code simple
+\item Comment your code. \textit{Always code as if the person who ends up maintaining your code will be a violent psychopath who knows where you live}. Or simply imagine yourself in a couple weeks, trying to figure out what your script meant.
+\end{itemize}
+
+While coding remember to use the function \textbf{help()} as much as possible. It is also a good idea to have a ``programming buddy'', share your code, share your findings, improve together. Finally the internet is your best friend. There are an uncredible amount of tutorials, lectures, help, cheat-sheet, Q\&A, etc.. The answer is out there.
+
+\subsection*{Setting up for today}
+
+As a reminder, you can program in python using the shell interpreted or using scripts. As we are going to increase the levelk of complexity or our programs in which case scripts are highly recommended.
+\\
+We still need a shell to run our script to the iunterpreter, so we will start by opening a shell, move to the Desktop and make a new directory called \textbf{ssiti3}. This will be our workding directory for today. You will also need to copy the file \textit{file1.txt} in this directory, which is in the ssiti directory on your Desktop.\\
+Reminder, you can do it in a few command lines :
+
+\texttt{\$ cd ~/Desktop}\\
+\texttt{\$ mkdir ssiti3}\\
+\texttt{\$ cd ssiti3}\\
+\texttt{\$ cp ../ssiti/file1.txt}\\
+\subsection*{Reading a file}
+Python has a type of object called \textbf{file}, which is what we are going to use. Reminder to know everything about this type you can use the python intertreper :\\
+\texttt{ \$ python}\\
+\texttt{ >>> help(file)}\\
+
+Open a new script \textit{yop.txt}. We are going to start by reading the file \textit{file1.txt}. First we need to open the file:
+
+\begin{python}
+filename='file1.txt'
+f=open(filename,'r')
+print ``the type of f is :''
+print type(f)
+f.close()
+\end{python}
+We open the flie with option \textbf{'r'} which means \textit{read}.Any file open \textbf{MUST} be closed. Any operation on the file must be done between the open and close commands. As a start we can call the function \textbf{readline()} on the file object. This will read a line:
+\begin{python}
+filename='file1.txt'
+f=open(filename,'r')
+l=f.readline() # read the first line
+print(l) # check in the shell
+l=f.readline() # read the second line
+print(l) # check in the shell
+wf.close()
+\end{python}
+
+The easiest way to read a file is to used the function \textbf{readlines()} which load each line of the file in a list. Here is an example:
+\\
+\begin{python}
+filename='file1.txt'
+f=open(filename,'r')
+ll=f.readlines()
+print(ll)
+f.close()
+\end{python}
+Can you recongnise the type of the element of the list \textit{ll}? \\
+Looking at \textit{ll}, you will notice unexpected symbols in your variables like \textbf{\\t} and \textbf{\\n}:
+ \textbf{\\t} code for a tabulation, \textbf{\\n} code for the end of a line. An other signals exist---though it does not appear here---when you read a file called \textbf{EOF} which refers to the end of the file. When python receives \textbf{EOF} signal, it will stop reading operations.
+\\
+Using a for loop, make a script to read \textit{file1.txt} and output the content of the file in the shell. You will see that some empty lines appear that were not in the orgininal file. Can you make those empty line disappear ? (Hint : use string concatanation \textbf{+} or the function \textbf{split} on string.). Look at the end for a correction.
+\\
+Reminder: to read the original file in command lines you can use the command \textit{cat} or \textit{less}.
+\\\\
+Using the \textbf{split()} function can you output only the second column of the file? Look at the end for a correction.
+\\
+There are other methods to read files :\\
+\textbf{f.read(x)} will read (at most) x bytes in your file. You can iteration on read until the end of the file.\\
+\textbf{f.seek(position, offset)} will put the reading cursor at a specific position. Position must indicates the number of octet after (or before if negative) the offset. The offset is either the beginning (0), the end (2), where the reading cursor is currently placed (1).
+
+\subsection*{Write in a file}
+Now it is time to create file with our script. As before we need to star by opening a file, but with the option \textbf{'w'}, for \textit{write}. 
+\begin{python}
+newfilename='newfile1.txt'
+f=open(newfilename,'w')
+f.close()
+\end{python}
+As before, we must close the file at the end! This will create a new file called \textit{newfile1.txt}. As we do no operation on it the file will be empty. If a file already existed with the same name, the previous file will be releted and replaced by the new one. \\
+If you want to write a text at the end of an existing file you must use the option \textbf{'a'} instead of \textbf{'w'}. \\
+To write in the file, use the function f.write(). Here is an example:
+\begin{python}
+newfilename='newfile1.txt'
+f=open(newfilename,'w')
+f.write('Hello world')
+f.close()
+\end{python}
+Can you write in a file the list of the first ten numbers (from 0 to 9) displayed on one line?
+\\
+Can you write in a file the list of numbers from 10 to 100 displayed each on a different line?
+\\
+
+If speeds really matter, you should know that it is faster to concatenate your output in a string, amd then apply the function \textbf{write} in the whole string, instead of applying \textbf{write} many times. The same is true for the \textbf{print} function to display in the shell.
+
+\subsection*{Reading a file, writing in another}
+It is possible to read and write in the same file. However it is not a good practice, if something goes wrong when you test your code, you will erase your data file. Therefore we will look into the safer method which is reading a file and writing in an other. You already know all the commands, you just have to be careful dealing with the different file without mixing up. Keep your variable names clear, and it should be easy. Here is the skeleton for a code to do that:
+
+\begin{python}
+fileToRead='file1.txt'
+fToRead=open(fileToRead,'r')
+
+fileToWrite='newfile2.txt'
+fToWrite=open(fileToWrite,'r')
+
+# do something
+
+fToWrite.close()
+fToRead.close()
+\end{python}
+
+Can you read \textit{file1.txt} and copy it into a new file called \textit{file1\_copy.txt}?\\
+Can you read \textit{file1.txt} and copy it into a new file called \textit{file1\_copy\_with\_dash.txt} replacing the tabulation in the file by a dash \textbf{-}? \\
+
+\section*{Importing a library}
+Python's programming is heavily based on library. All the command we have been using so far belongs to the python language. They will be available on any computer where python is installed (with a similar version). In theory you could do any programming just using this command lines. However you would reinvent the wheel. You will want to use functions that someone probably already coded before you, probably even better (i.e. faster) than you. There will also be functions that you may not know how to write yourself at all, but fortunately someone already did it and you can stay naive to the way it works (to a certain point). A library often needs to be installed on your system first, which means that your code loses portability. \\
+Libraries will give you access to numerical manipulations, statistical analyses, GUI programming and many more. There are here to make your coding easier, use them!
+\\
+Today we will look into a very popular library : \textbf{NumPy}\footnote{\url{http://www.numpy.org/}} (Numerical Python). \textit{NumPy is an extension to the Python programming language, adding support for large, multi-dimensional arrays and matrices, along with a large library of high-level mathematical functions to operate on these arrays.} (Wikipedia). Basically this library permits you to do operation similar to MatLab in Python (for free...) while optimizing the speed. It is open source an well maintained.\\
+
+
+\section*{Corrections}
+Reading \textit{file1.txt} with a nice output:\\
+\label{ex1}
+Using string concatenation:\\
+\begin{python}
+filename='file1.txt' # filename to read
+f=open(filename,'r') # open the file
+ll=f.readlines() # load the lines
+out='' # we create an empty string
+for l in ll: # for every line in the file
+   out+=l # concatenate the strings
+print(out)
+f.close()
+\end{python}
+
+Or using \textbf{split}:\\
+\begin{python}
+filename='file1.txt' # filename to read
+f=open(filename,'r') # open the file
+ll=f.readlines() # load the lines
+for l in ll: # for every line in the file
+   tmp=l.split('\n') #  split the string where there is a '\n'
+   tmp2=tmp[0] # take the first part of this list, i.e. everything before the '\n'
+   print(tmp2)
+print(out)
+f.close()
+\end{python}
+Reading only the second column of \textit{file1.txt}:
+\label{ex2}
+\begin{python}
+filename='file1.txt' # filename to read
+f=open(filename,'r') # open the file
+ll=f.readlines() # load the lines
+for l in ll: # for every line in the file
+   tmp=l.split('\t') #  split the string where there is a '\t'
+   tmp2=tmp[1] # take the second part of this list, i.e. everything between the first '\t' and the second one
+   print(tmp2)
+print(out)
+f.close()
+\end{python}
+Writing the numbers from 0 to 1 on one line:
+\begin{python}
+filename='oneToTen.txt' 
+f=open(filename,'w')
+for i in range(10): # i takes the value form 0 to 9
+   f.write(`%d `%i) # each number is follow by a space
+f.write(``\n'') # send the end of a line signal to create an empty line at the end
+f.close()
+\end{python}
+Writing the numbers from 10 to 100 each on a line:
+\begin{python}
+filename='tenToHundred.txt'
+f=open(filename,'w')
+for i in range(10,110,10): # i takes the value form 10 to 10 with a step of 10
+   f.write(``%d\n``%i) # each number is follow by a end of a line
+f.close()
+\end{python}
+A faster version could be:
+\begin{python}
+filename='tenToHundred.txt'
+f=open(filename,'w')
+output=''
+for i in range(10,110,10): # i takes the value form 10 to 10 with a step of 10
+   output+=`%d\n`%i # using string concatenation
+f.write(output)
+f.close()
+\end{python}
+
+Copy \textit{file1.txt} into \textit{file1\_copy.txt}
+\begin{python}
+filee='tenToHundred.txt'
+f=open(filename,'w')
+output=''
+for i in range(10,110,10): # i takes the value form 10 to 10 with a step of 10
+   output+=`%d\n`%i # using string concatenation
+f.write(output)
+f.close()
+\end{python}
+
+
+\newpage{}
+\section{Exercises}
+\subsection{Fibonacci sequence}
+
+\begin{equation}
+F_n = F_{n-1}+F_{n-2}, where F_0 = 0 and F_1 = 1
+\end{equation}
+
+\end{document}

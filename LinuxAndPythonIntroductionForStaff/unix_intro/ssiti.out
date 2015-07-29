@@ -1,0 +1,17 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{The Shell}{}% 2
+\BOOKMARK [1][-]{section.3}{Simple commands}{}% 3
+\BOOKMARK [2][-]{subsection.3.1}{Directory Structure}{section.3}% 4
+\BOOKMARK [3][-]{subsubsection.3.1.1}{ls \(list\)}{subsection.3.1}% 5
+\BOOKMARK [3][-]{subsubsection.3.1.2}{mkdir \(make directory\)}{subsection.3.1}% 6
+\BOOKMARK [3][-]{subsubsection.3.1.3}{cd \(change directory\)}{subsection.3.1}% 7
+\BOOKMARK [2][-]{subsection.3.2}{Play with files and directories}{section.3}% 8
+\BOOKMARK [3][-]{subsubsection.3.2.1}{Create, copy, rename and move}{subsection.3.2}% 9
+\BOOKMARK [3][-]{subsubsection.3.2.2}{Display text files}{subsection.3.2}% 10
+\BOOKMARK [3][-]{subsubsection.3.2.3}{More useful commands on files}{subsection.3.2}% 11
+\BOOKMARK [3][-]{subsubsection.3.2.4}{Output Redirection}{subsection.3.2}% 12
+\BOOKMARK [3][-]{subsubsection.3.2.5}{CSV and Tab delimited files}{subsection.3.2}% 13
+\BOOKMARK [1][-]{section.4}{Text file edition}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{Microsoft Word}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{Nano}{section.4}% 16
+\BOOKMARK [1][-]{section.5}{Linux Cheat Sheet}{}% 17

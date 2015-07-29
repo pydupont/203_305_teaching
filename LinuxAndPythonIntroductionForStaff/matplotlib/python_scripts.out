@@ -1,0 +1,5 @@
+\BOOKMARK [1][-]{section.1}{Basic way to read in a CSV file}{}% 1
+\BOOKMARK [1][-]{section.2}{Read a complex CSV file using numpy library.}{}% 2
+\BOOKMARK [1][-]{section.3}{Simple plot of a data from a CSV file containing only one column.}{}% 3
+\BOOKMARK [1][-]{section.4}{Scatter plot of data from a CSV file}{}% 4
+\BOOKMARK [1][-]{section.5}{Box plot of data from a CSV file}{}% 5

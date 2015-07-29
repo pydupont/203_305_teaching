@@ -1,0 +1,9 @@
+\frametitle {Bonus: How to choose a programming language?}\begin {enumerate}[<+->]
+\item Figure out what works for the team/company: \only<1>{Media: Ruby, PHP, JS, Java; Enterprise: Java, C\#; Research: Scala (simplified Java), C++, Erlang, Java and Python}
+\item Find out what works in context
+\item Consider ease of learning and use for computer programming languages
+\item Evaluate the availability of tools (or libraries) for each of your potential computer programming languages
+\item Look at cross-platform ability
+\item Determine the ease of server-side and client-side scripting
+\end{enumerate}
+\tiny{\href{http://www.wikihow.com/Choose-a-Programming-Language}{Choose a Programming Language}}

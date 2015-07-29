@@ -1,0 +1,337 @@
+//////////////////
+// FILE fibo.py //
+//////////////////
+
+def fibo(n):
+    if n == 0 or n == 1:
+        return n
+    return fibo(n - 2) + fibo(n - 1)
+
+////////////////////////
+// FILE fibo_pure_c.c //
+////////////////////////
+
+#include <stdio.h>
+#include <stdlib.h>
+
+long fibo(long n){
+  if(n == 0 || n == 1){return n;}
+  return fibo(n - 2) + fibo(n - 1);
+}
+
+
+void main(int argc, char* argv[]){
+  printf("%ld\n",fibo(38));
+}
+
+//////////////////////////////
+// FILE fibo_pure_c_test.py //
+//////////////////////////////
+
+import fibo_pure_c as fibo
+print fibo.fibo(38)
+
+///////////////////
+// FILE fibo.pyx //
+///////////////////
+
+cpdef fibo(n):
+    if n == 0 or n == 1:
+        return n
+    return fibo(n - 2) + fibo(n - 1)
+
+////////////////////////
+// FILE fibo_pure_c.i //
+////////////////////////
+
+%module fibo_pure_c
+%{
+extern long fibo(long n);
+ %}
+extern long fibo(long n);
+
+//////////////////////
+// FILE pi_no_par.c //
+//////////////////////
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                                                            *
+* compute pi by intergrating f(x) = 4/(1 + x **2)            *
+*                                                            *
+* Variables :                                                *
+*                                                            *
+* pi the calculated result                                   *
+* n number of point of integration                           *
+* x midpoint of each rectangle ’s interval                   *
+* f function to integrate                                    *
+* sum , pi area of rectangles                                *
+* tmp temporary scratch space for global summation           *
+* i loop index                                               *
+*                                                            *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define PI 3.1415926535897932384626433832795029L
+
+double f(double a) {
+  return (double)4.0/((double)1.0+(a*a));
+}
+
+int main(int argc, char* argv[])
+{
+  int n, i;
+  double h, pi, sum, x ;
+  for(;;) {
+    printf("Enter the number of intervals: (0  quits)");
+    if(!scanf("%lu",&n)){return 2;}
+    if(n ==0)
+      break;
+    //LOOP TO PARALLELIZE
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+    for(i =1;i<=n;i++) {
+      x = h*((double)i-(double)0.5);
+      sum += f(x);
+    }
+    pi = h*sum;
+    //END
+    printf("pi is approximatly: %.16f Error is: %.16f \n", pi, fabs(pi-PI));
+  }
+  return EXIT_SUCCESS ;
+}
+
+////////////////////
+// FILE pi_mpi2.c //
+////////////////////
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <mpi.h>
+#include <time.h>
+#define PI 3.1415926535897932384626433832795029L
+
+double f(double a) {
+  return (double)4.0/((double)1.0+(a*a));
+}
+
+#define MTAG1 1
+#define MTAG2 2
+
+int main(int argc, char* argv[])
+{
+  int n, i;
+  double h, pi, sum, x ;
+  long t;
+  double mypi;
+  int myid, numprocs;
+
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+  MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+  n = 0;
+  for(;;) {
+    if (myid == 0){
+      printf("Enter the number of intervals: (0  quits)\n"); 
+      if(!scanf("%d",&n)){return 2;}
+      t = clock();
+    }
+    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    if(n ==0)
+      break;
+    //LOOP TO PARALLELIZE
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+    for(i = myid + 1; i <= n; i += numprocs){
+      x = h * ((double)i - (double)0.5);
+      sum += f(x);
+    }
+    mypi = h*sum;
+    MPI_Reduce(&mypi, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    //END
+    if(myid == 0){
+      printf("pi is approximatly: %.16f Error is: %.16f \n", pi, fabs(pi-PI));
+      printf("%.16f\n", (double)(clock()-t)/(double)CLOCKS_PER_SEC);
+    }
+  }
+  MPI_Finalize();
+  return EXIT_SUCCESS ;
+}
+
+//////////////////////
+// FILE pi_openmp.c //
+//////////////////////
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <omp.h>
+#define PI 3.1415926535897932384626433832795029L
+
+double f(double a) {
+  return (double)4.0/((double)1.0+(a*a));
+}
+
+int main(int argc, char* argv[])
+{
+  int n, i;
+  double h, pi, sum, x ;
+  for(;;) {
+    printf("Enter the number of intervals: (0  quits)\n");
+    if(!scanf("%u",&n)){return 2;}
+    if(n ==0)
+      break;
+    //LOOP TO PARALLIZE
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+    #pragma omp parallel for num_threads(12) private(i,x) reduction(+:sum)
+    for(i =1;i<=n;i++) {
+      x = h*((double)i-(double)0.5);
+      //#pragma omp critical
+      sum += f(x);
+    }
+    pi = h*sum;
+    //END
+    printf("pi is approximatly: %.16f Error is: %.16f \n", pi, fabs(pi-PI));
+  }
+  return EXIT_SUCCESS ;
+}
+
+//////////////////////////
+// FILE pi_mpi_openmp.c //
+//////////////////////////
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <mpi.h>
+#include <omp.h>
+#define PI 3.1415926535897932384626433832795029L
+
+double f(double a) {
+  return (double)4.0/((double)1.0+(a*a));
+}
+
+int main(int argc, char* argv[])
+{
+  int n, i;
+  double h, pi, sum, x ;
+  
+  double mypi;
+  int myid, numprocs;
+
+  MPI_Init(&argc, &argv);
+  MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+  MPI_Comm_rank(MPI_COMM_WORLD, &myid);
+  n = 0;
+  for(;;) {
+    if (myid == 0){
+      printf("Enter the number of intervals: (0  quits)\n"); 
+      if(!scanf("%d",&n)){return 2;}
+    }
+    MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    if(n ==0)
+      break;
+    //LOOP TO PARALLIZE
+    h = ((double)1.0)/(double)n;
+    sum = 0.0;
+    #pragma omp parallel for reduction(+:sum) private(i,x)
+    for(i = myid + 1; i <= n; i += numprocs){
+      x = h * ((double)i - (double)0.5);
+      sum += f(x);
+    }
+    mypi = h*sum;
+    MPI_Reduce(&mypi, &pi, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+    //END
+    if(myid == 0){
+      printf("pi is approximatly: %.16f Error is: %.16f \n", pi, fabs(pi-PI));
+    }
+  }
+  MPI_Finalize();
+  return EXIT_SUCCESS ;
+}
+
+///////////////////////
+// FILE pi_no_par.py //
+///////////////////////
+import sys
+PI = 3.141592653589793
+
+def f(a):
+    return 4.0/(1.0+a**2)
+
+def main():
+    while(1):
+        n = raw_input("Enter the number of intervals: (0  quits)\n")
+        try:
+            n=int(n)
+        except ValueError:
+            return 2
+        if n == 0: break
+        #LOOP TO PARALLLELIZE
+        h = 1.0/n
+        sum = 0.0
+        for i in range(1,n):
+            x = h*(i - 0.5)
+            sum += f(x)
+        pi = h * sum
+        #END
+        sys.stdout.write("pi is approximatly: %.16f Error is: %.16f \n" %(pi, abs(pi-PI)));
+
+if __name__ == "__main__":
+    main()
+
+/////////////////////////////
+// FILE pi_weave_openmp.py //
+/////////////////////////////
+
+#!/usr/bin/env python
+import sys
+from scipy import weave
+from scipy.weave import converters
+import time
+PI = 3.141592653589793
+
+code="""
+int i;
+double x;
+double sum = 0.0;
+#pragma omp parallel for private(i,x) reduction(+:sum)
+for(i = 1;i <= n; i++) {
+    x = h*((double)i-(double)0.5);
+    sum += (double)4.0/((double)1.0+(x*x));
+}
+return_val = sum;
+"""
+vars = "h n".split()
+weave_omp = \
+{
+    'headers': ['<omp.h>'],
+    'extra_compile_args': ['-fopenmp'],
+    'extra_link_args': ['-lgomp']
+}
+
+def f(a):
+    return 4.0/(1.0+a**2)
+
+def main():
+    while(1):
+        n = raw_input("Enter the number of intervals: (0  quits)\n")
+        try:
+            n=int(n)
+        except ValueError:
+            return 2
+        if n == 0: break
+        #LOOP TO PARALLIZE
+        h = 1.0/n
+        sum = float(0.0)
+        tps = time.time()
+        sum = weave.inline(code, vars, type_converters = converters.blitz, compiler = 'gcc', **weave_omp)
+        print time.time() - tps
+        pi = h * sum
+        #END
+        sys.stdout.write("pi is approximatly: %.16f Error is: %.16f \n" %(pi, abs(pi-PI)));
+
+if __name__ == "__main__":
+    main()

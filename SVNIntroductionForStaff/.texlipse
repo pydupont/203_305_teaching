@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Thu Sep 13 16:13:29 NZST 2012
+markTmpDer=true
+builderNum=2
+outputDir=
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=SvnCheatSheet.tex
+outputFile=SvnCheatSheet.pdf
+langSpell=en
+markDer=true
+srcDir=

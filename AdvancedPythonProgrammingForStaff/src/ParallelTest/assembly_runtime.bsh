@@ -1,0 +1,43 @@
+#!/bin/bash
+
+### Set the job name
+#PBS -N 1821L
+
+### Request email when job aborts (‘a’), begins (‘b’) or ends (‘e’)
+#PBS -m a
+
+### Specify email address to use for notifications
+#PBS -M mpcox@massey.ac.nz
+
+### Set the queue to submit this job to
+#PBS -q admin
+
+### Specific stdout and stderr files
+#PBS -o localhost:/data/mpcox/1821L/assembly/stdout.txt
+#PBS -e localhost:/data/mpcox/1821L/assembly/stderr.txt
+
+### Set the maximum amount of memory required
+#PBS -l mem=80gb
+
+### Set the number of CPUs to be used (here, just one)
+#PBS -l nodes=1:ppn=12
+
+### Specify required CPU run time (hours:minutes:seconds)
+###PBS -l cput=720:0:0
+
+### Specify required walltime (hours:minutes:seconds)
+#PBS -l walltime=720:0:0
+
+### Commands you want to run
+### Remember to specify paths to executables and files where needed
+
+date
+
+cd /data/mpcox/1821L/assembly/
+
+TMPDIR=/data/mpcox/1821L/assembly/
+/home/m/mpcox/bin/mpirun -np 8 /home/m/mpcox/bin/pmMPI /data/mpcox/1821L/assembly/assembly_parameters.txt
+
+#/lsc/local/bin/mpiexec -f /home/m/mpcox/.mf -n 8 /home/m/mpcox/bin/pmMPI /data/mpcox/1821L/assembly/assembly_parameters.txt
+
+date

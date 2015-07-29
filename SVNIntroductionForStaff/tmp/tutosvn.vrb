@@ -1,0 +1,29 @@
+\begin {block}{Create a repository}
+\begin{minted}[fontsize=\scriptsize]{bash}
+%>sudo svnadmin create /var/svn/my_repository_name
+\end{minted}
+\end{block}
+\begin{block}{Setup the repository}
+Uncomment the following lines in file
+\begin{minted}[fontsize=\scriptsize]{bash}
+/repository/path/conf/svnserve.conf
+\end{minted}
+\hline
+\begin{minted}[fontsize=\scriptsize]{bash}
+anon-access = none
+auth-access = write
+password-db = passwd
+\end{minted}
+\end{block}
+\begin{block}{Setup the access to repository}
+Edit the file
+\begin{minted}[fontsize=\scriptsize]{bash}
+/repository/path/conf/passwd
+\end{minted}
+\hline
+\begin{minted}[fontsize=\scriptsize]{bash}
+[users]
+user1_login = user1_password
+user2_login = user2_password
+\end{minted}
+\end{block}

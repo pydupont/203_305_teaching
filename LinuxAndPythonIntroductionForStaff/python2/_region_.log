@@ -1,0 +1,22 @@
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.10.10)  11 APR 2013 14:33
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**\input _region_.tex
+(./_region_.tex  !name(TeX Live 2012.tex)  !name(TeX Live 2012) !offset(-2) 
+ !name(TeX Live 2012.tex) !offset(-4) )
+! Emergency stop.
+<*> \input _region_.tex
+                       
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 5 strings out of 493488
+ 130 string characters out of 3139642
+ 49432 words of memory out of 3000000
+ 3412 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 957 hyphenation exceptions out of 8191
+ 4i,0n,3p,70b,8s stack positions out of 5000i,500n,10000p,200000b,50000s
+!  ==> Fatal error occurred, no output PDF file produced!

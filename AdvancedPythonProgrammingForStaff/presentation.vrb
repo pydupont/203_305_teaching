@@ -1,0 +1,28 @@
+\frametitle{Inlining parallelized C/C++ code in python}
+  \begin{minted}[fontsize=\scriptsize, linenos=false, numbersep=5pt]{python}
+def f(a):
+    return 4.0/(1.0+a**2)
+
+def main():
+    while(1):
+        n = raw_input("Enter the number of intervals: (0  quits)\n")
+        try:
+            n=int(n)
+        except ValueError:
+            return 2
+        if n == 0: break
+        #LOOP TO PARALLIZE
+        h = 1.0/n
+        sum = float(0.0)
+        tps = time.time()
+        sum = weave.inline(code, vars,
+                type_converters = converters.blitz,
+                compiler = 'gcc', **weave_omp)
+        print time.time() - tps
+        pi = h * sum
+        #END
+        sys.stdout.write("pi is approximatly: %.16f Error is: %.16f \n" % \
+                 (pi, abs(pi-PI)));
+
+  \end{minted}
+$n = 10^9$ pi evaluated in 1.3s (12 threads)

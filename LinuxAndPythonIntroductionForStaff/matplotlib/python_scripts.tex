@@ -1,0 +1,188 @@
+\documentclass[article,10pt]{scrartcl}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{vmargin}
+\setmarginsrb{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}{1.3cm}
+\setlength{\parindent}{0cm}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{hyperref}
+
+
+\hypersetup{
+    bookmarks=true,         % show bookmarks bar?
+    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+    pdftoolbar=true,        % show Acrobat’s toolbar?
+    pdfmenubar=true,        % show Acrobat’s menu?
+    pdffitwindow=false,     % window fit to page when opened
+    pdfstartview={FitH},    % fits the width of the page to the window
+    pdfnewwindow=true,      % links in new window
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=black,          % color of internal links (change box color with linkbordercolor)
+    citecolor=black,        % color of links to bibliography
+    filecolor=black,      % color of file links
+    urlcolor=black           % color of external links
+}
+
+
+\usepackage[final]{pdfpages}
+% python script syntax taken from 
+% http://widerin.org/blog/syntax-highlighting-for-python-scripts-in-latex-documents
+\definecolor{Code}{rgb}{0,0,0}
+\definecolor{Decorators}{rgb}{0.5,0.5,0.5}
+\definecolor{Numbers}{rgb}{0.5,0,0}
+\definecolor{MatchingBrackets}{rgb}{0.25,0.5,0.5}
+\definecolor{Keywords}{rgb}{0,0,1}
+\definecolor{self}{rgb}{0,0,0}
+\definecolor{Strings}{rgb}{0,0.63,0}
+\definecolor{Comments}{rgb}{0,0.63,1}
+\definecolor{Backquotes}{rgb}{0,0,0}
+\definecolor{Classname}{rgb}{0,0,0}
+\definecolor{FunctionName}{rgb}{0,0,0}
+\definecolor{Operators}{rgb}{0,0,0}
+\definecolor{Background}{rgb}{0.98,0.98,0.98}
+
+\lstnewenvironment{python}[1][]{
+\lstset{
+%numbers=left,
+%numberstyle=\footnotesize,
+%numbersep=1em,
+xleftmargin=1em,
+framextopmargin=2em,
+framexbottommargin=2em,
+showspaces=false,
+showtabs=false,
+showstringspaces=false,
+frame=l,
+tabsize=3,
+% Basic
+%basicstyle=\ttfamily\small\setstretch{},
+backgroundcolor=\color{Background},
+language=Python,
+% Comments
+commentstyle=\color{Comments}\slshape,
+% Strings
+stringstyle=\color{Strings},
+morecomment=[s][\color{Strings}]{"""}{"""},
+morecomment=[s][\color{Strings}]{'''}{'''},
+% keywords
+morekeywords={import,from,class,def,for,while,if,is,in,elif,else,not,and,or,print,break,continue,return,True,False,None,access,as,,del,except,exec,finally,global,import,lambda,pass,print,raise,try,assert,float},
+keywordstyle={\color{Keywords}\bfseries},
+% additional keywords
+morekeywords={[2]@invariant},
+keywordstyle={[2]\color{Decorators}\slshape},
+emph={self},
+emphstyle={\color{self}\slshape},
+%
+}}{}
+
+\begin{document}
+\title{Read and Plot data with Python - Solutions}
+\subtitle{Student and Staff IT Introduction}
+\date{27/06/2013}
+\author{ssiti2013@gmail.com\footnote{Document written by Pierre-Yves Dupont (p.y.dupont@massey.ac.nz), for IFS staff and students, Massey University.}}
+\maketitle
+
+\section{Basic way to read in a CSV file}
+
+\begin{python}
+import sys
+
+# sys.argv is a list containing the command line parameters
+# sys.argv[0] always contains the name of the python script
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+csv_file_name = sys.argv[1]
+csv = open(csv_file_name, 'r') #open the csv file
+data = []
+for line in csv: #read the file
+   line = line.rstrip() # remove the 'newline' character at the end of the line
+   data.append(float(line))
+print data
+csv.close() #close the csv file
+\end{python}
+
+\section{Read a complex CSV file using \textbf{numpy} library.}
+\begin{python}
+import sys
+import numpy
+
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+data = numpy.genfromtxt(sys.argv[1], dtype=float, delimiter=',', skip_header=True) 
+print 'All data'
+print data
+print 'Column 1'
+print data[:,0] # column 1
+print 'Column 1'
+print data[:,1] # column 2
+\end{python}
+\newpage
+\section{Simple plot of a data from a CSV file containing only one column.}
+\begin{python}
+import matplotlib.pyplot as plt # import the pyplot module as plt
+import sys
+
+# sys.argv is a list containing the command line parameters
+# sys.argv[0] always contains the name of the python script
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+csv_file_name = sys.argv[1]
+csv = open(csv_file_name, 'r') #open the csv file
+data = [] #initiation of the data list
+for line in csv: #read the file
+   line = line.rstrip() # remove the 'newline' character at the end of the line
+   data.append(float(line))#append the current value in the data list
+print data
+csv.close() #close the csv file
+
+plt.plot(data) #Simple scatter plot of the data
+plt.ylabel('My data') #title of the Y axis
+plt.show() # show the plot
+\end{python}
+
+\section{Scatter plot of data from a CSV file}
+\begin{python}
+import matplotlib.pyplot as plt
+import sys
+import numpy
+
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+data = numpy.genfromtxt(sys.argv[1], dtype=float, delimiter=',', skip_header=True) 
+
+x = data[:,0]
+y = data[:,1]
+
+plt.plot(x,y, 'bo')
+plt.xlabel( "X values" )
+plt.ylabel( "Y values" )
+plt.show()
+\end{python}
+\newpage{}
+\section{Box plot of data from a CSV file}
+\begin{python}
+import matplotlib.pyplot as plt
+import sys
+import numpy
+
+if len(sys.argv) != 2:
+   print 'Error: give a file name on the command line'
+   exit(1) # Exit and return the error code 1
+
+data = numpy.genfromtxt(sys.argv[1], dtype=float, delimiter='\t', skip_header=True) 
+
+plt.boxplot(data)
+plt.ylim([-1,4])
+plt.show()
+\end{python}
+\end{document}
