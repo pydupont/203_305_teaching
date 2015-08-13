@@ -613,9 +613,51 @@
 	  </section>
 
 	  <section>
-	    <h2>Lab case study</h2>
-	    <h3>Herbivory in Nicotiana attenuata (Solanaceae)</h3>
-	    
+	    <h3>Lab case study: Herbivory in Nicotiana attenuata (Solanaceae)</h3>
+	    <table>
+	      <thead></thead>
+	      <tbody>
+		<tr>
+		  <td width="50%">
+		    <img data-src="pics/NicotianaEcologyBox.png" height="400px" style="background: none;"/>
+		  </td>
+		  <td width="50%" style="vertical-align: top">
+		    <b>What type of research?</b>
+		    <ul>
+		      <li />Which genes and metabolites defend plants against insect?
+		      <li />Costs and benefts of defense
+		      <li />Genetic engineering of defense traits
+		      <li />Plant pollination
+		    </ul>
+		  </td>
+		</tr>
+	      </tbody>
+	    </table>
+	    <div class="footer"><a href="https://www.ice.mpg.de/ext/molecular-ecology.html" target="_blank">MPI for Chemical Ecology, Baldwin Lab</a></div>
+	  </section>
+
+	  <section>
+	    <h3>Lab case study: Herbivory in Nicotiana attenuata (Solanaceae)</h3>
+	    <table>
+	      <thead></thead>
+	      <tbody>
+		<tr>
+		  <td width="50%">
+		    <img data-src="pics/NicotianaEcologyBox.png" height="400px" style="background: none;"/>
+		  </td>
+		  <td width="50%" style="vertical-align: top">
+		    <b>Why <i>N. attenuata</i>?</b>
+		    <ul>
+		      <li />Diverse herbivore community
+		      <li />High plasticity (direct and indirect defense)
+		      <li />"Chases" fire
+		      <li />Easily cultivated annual species
+		    </ul>
+		  </td>
+		</tr>
+	      </tbody>
+	    </table>
+	    <div class="footer"><a href="https://www.ice.mpg.de/ext/molecular-ecology.html" target="_blank">MPI for Chemical Ecology, Baldwin Lab</a></div>
 	  </section>
 	  
 	</section>
@@ -631,10 +673,12 @@
       // Full list of configuration options available at:
       // https://github.com/hakimel/reveal.js#configuration
       Reveal.initialize({
-      controls: true,
+      controls: false,
       progress: true,
-      history: true,
+      history: false,
       center: true,
+      overview: false,
+      touch: true,
 
       width: 960,
       height: 700,
@@ -653,9 +697,13 @@
       { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
       { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
       { src: 'plugin/zoom-js/zoom.js', async: true },
-      { src: 'plugin/notes/notes.js', async: true }
+      { src: 'plugin/notes/notes.js', async: true },
+      //{ src: 'plugin/remotes/remotes.js', async: true },
+      { src: 'plugin/math/math.js', async: true },
+      { src: 'plugin/jump/jump.js', async: true }
       ]
       });
+      Reveal.configure({ slideNumber: 'c / t' });
       
     </script>
     
