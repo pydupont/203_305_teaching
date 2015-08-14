@@ -1173,3 +1173,19 @@ body {
 
 .zoomed .reveal .roll span:after {
   visibility: hidden; }
+
+
+
+/*********************************************
+ * PERSONAL CHANGES
+ *********************************************/
+.left-align{
+    text-align: left; 
+}
+
+
+table.no-decor tbody tr td{
+    border: 0px;
+    vertical-align: bottom;
+    /* padding-top: 30px; */
+}
