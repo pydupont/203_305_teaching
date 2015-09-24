@@ -66,7 +66,7 @@
       <p>
         <ul>
           <li><span class="list-header">25.9.15</span> – Introduction (lecture), <i>AHB1.40B</i></li>
-          <li><span class="list-header">29.9.15</span> – From raw data to lists of differentially expressed genes (Step by step analysis of a microarray data set using the R language, <b>3h lab</b>, <i>SC5.10</i>) - <span class="highlight">Discussion worksheet due, research proposal due</span></li>
+          <li><span class="list-header">29.9.15</span> – From raw data to lists of differentially expressed genes (Step by step analysis of a microarray data set using the R language, <b>3h lab</b>, <i>ScC5.10</i>) - <span class="highlight">Discussion worksheet due, research proposal due</span></li>
           <li><span class="list-header">2.10.15</span> – Paper discussion, <i>AHB1.40B</i> </li>
           <li><span class="list-header">6.10.15</span> – Biological interpretation of microarray data (Gene ontology analysis using the R language + online research of candidate genes, <b>3h lab</b>, <i>SC5.10</i>)</li>
           <li><span class="list-header">9.10.15</span> – <span class="highlight">Lab discussion</span>, <i>AHB1.40B</i></li>
@@ -286,7 +286,7 @@
           <div style="float:right; width: 50%">
         <ul>
           <ul class="fragment">
-            <li>What Analysis?
+            <li>What analysis?
             <li>What analysis software?
             <li>Replication level
             <li>Hybridisation scheme
@@ -335,9 +335,9 @@
           <div style="float:right; width: 50%">
         <ul>
           <ul class="fragment">
-            <li>Data transformation and normalization
+            <li>Data transformation and normalisation
             <li>Analysis of differentially expressed genes (<b>statistical tests</b>, gene ontology, ...)
-            <li>Visualization (graphics)
+            <li>Visualisation (graphics)
             <li>Data storage (databases, MIAME standards)
           </ul>
         </ul>
@@ -392,6 +392,18 @@
       <div style="float:right; width: 50%">After</div>
       </div>
       <img data-src="pics/noise_cancelling.jpg" height="450px" />
+      </section>
+
+      <section>
+      <h2>Data normalisation</h2>
+      <h4>Global normalisation</h4>
+      <img data-src="pics/norm_global.png" height="400px" />
+      </section>
+
+      <section>
+      <h2>Data normalisation</h2>
+      <h4>Lowess normalisation (<u>LO</u>cally <u>WE</u>ighted <u>S</u>catterplot <u>S</u>moothing)</h4>
+      <img data-src="pics/norm_lowess.png" height="400px" />
       </section>
 
       <section>
@@ -470,7 +482,7 @@
         <h2>T-test and P-value</h2>
         <img data-src="pics/Student's t-distribution.png" height="350px" style="background-color:transparent;"/>
         <blockquote style="width: 95%">
-          T-test is used only to compare two samples. To compare more, ANOVA (<u>AN</u>alysis <u>O</u>f <u>VA</u>riance) is used.
+          T-test is used only to compare two samples. To compare more than two samples, ANOVA (<u>AN</u>alysis <u>O</u>f <u>VA</u>riance) is used.
         </blockquote>
       </section>
       
@@ -495,7 +507,7 @@
           <div>Usually, a p &lt; &nbsp;<span class="fragment"><b>0.05</b></span>&nbsp; is considered small enough to reject the null hypothesis of no biological effect in favour of the alternative hypothesis of a biological effect.</div>
           <div class="fragment">P-values are also known under type &nbsp;<span class="fragment"><b>1</b></span>&nbsp; error – the probability of rejecting the null hypothesis when it is actually true (= false positive rate).</div>
           <div class="fragment">P-value of 0.01 means a false positive rate of &nbsp;<span class="fragment"><b>1</b></span>&nbsp; %.</div>
-          <div class="fragment">When analyzing multidimensional data sets, p-values need to be adjusted for &nbsp;<span class="fragment"><b>multiple testing</b></span>&nbsp;.</div>
+          <div class="fragment">When analysing multidimensional data sets, p-values need to be adjusted for &nbsp;<span class="fragment"><b>multiple testing</b></span>&nbsp;.</div>
           <div class="fragment">Two common p-value adjustment methods are &nbsp;<span class="fragment"><b>Bonferroni</b></span>&nbsp; and &nbsp;<span class="fragment"><b>False Discovery Rate</b></span>&nbsp;.</div>
         </div>
       </section>
@@ -532,7 +544,7 @@
         <h3>Benjamini-Hochberg method</h3>
         <table>
           <thead>
-        <th>P-value</th><th>Observed Number of genes</th><th>Expected number of False Positives</th><th>FDR</th>
+        <th>P-value</th><th>Observed number of genes</th><th>Expected number of false positives</th><th>FDR</th>
           </thead>
           <tbody>
         <tr><td>$10^{-2}$</td><td>184</td><td>64 </td><td>35</td></tr>
@@ -585,7 +597,7 @@
         <li>Essential <span class="highlight">sample annotation</span> including experimental factors and their values
         <li><span class="highlight">Experimental design</span> including sample data relationships (e.g. which hybridisations are technical and biological replicates)
         <li>Sufficient <span class="highlight">array annotation</span> (e.g. gene identifiers, probe sequences)
-        <li>Essential <span class="highlight">laboratory and data processing protocols</span> (e.g. normalization method used to obtain the final data)
+        <li>Essential <span class="highlight">laboratory and data processing protocols</span> (e.g. normalisation method used to obtain the final data)
           </ol>
         </div>
       </section>
@@ -653,7 +665,7 @@
           <td width="50%" style="vertical-align: top">
             <b>What type of research?</b>
             <ul>
-              <li />Which genes and metabolites defend plants against insect?
+              <li />Which genes and metabolites defend plants against insects?
               <li />Costs and benefits of defense
               <li />Genetic engineering of defense traits
               <li />Plant pollination
@@ -740,7 +752,7 @@
         <h3>Microarray Case Study</h3>
         <h4>6 arrays</h4>
         <div>
-          Each arrow represents one array. Herbivore-induced tissue (cy3) was co-hybridised control tissue (cy5). Each comparison was replicated three times.
+          Each arrow represents one array. Herbivore-induced tissue (Cy3) was co-hybridised control tissue (Cy5). Each comparison was replicated three times.
         </div>
         <img data-src="pics/chips.svg" height="400px"  style="background: none; margin: 0px;"/>
       </section>
