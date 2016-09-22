@@ -5,7 +5,7 @@ from plotly.graph_objs import *
 
 mu = 0
 x = np.linspace(-10, 10, 1000)
-dist = student_t(1e10, 0)
+dist = student_t(2)
 y = dist.pdf(x)
 data = Data([
     Scatter(

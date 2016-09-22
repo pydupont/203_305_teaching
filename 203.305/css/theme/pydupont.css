@@ -42,6 +42,11 @@
     color:#e7ad52;
 }
 
+.reveal .leftalign{
+    text-align: left;
+    float:left; 
+}
+
 /***************************************************/
 
 body {
@@ -55,6 +60,10 @@ body {
     font-size: 24px;
     font-weight: normal;
     color: #eee; }
+
+.reveal .titleframe{
+    color: #eee;
+}
 
 ::selection {
     color: #fff;
